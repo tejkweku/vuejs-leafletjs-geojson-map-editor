@@ -95,6 +95,7 @@ Download GeofenceEditor.
 
 Parameter | Type | Default | Description
 --------- | ---- | ------- | -----------
+mapbox-access-token | `String` | `null` | Mapbox Access Token.
 min-features | `Number` | `1` | Minimum number of features.
 max-features | `Numer` | `10` | Maximum number of features.
 data-input-type | `String` | `"both"` | Data input type: manual, map or both
