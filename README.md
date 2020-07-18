@@ -9,7 +9,9 @@
 
 **[Go to demo](http://tej-kweku.github.io/vuejs-leafletjs-map-editor)**.
 
-[![demo](https://github.com/tej-kweku/vuejs-leafletjs-map-editor/demo/demo.jpg)](http://tej-kweku.github.io/vuejs-leafletjs-map-editor)
+[![Demo 1](https://github.com/tej-kweku/vuejs-leafletjs-map-editor/img/demo1.jpg)](http://tej-kweku.github.io/vuejs-leafletjs-map-editor)
+
+[![Demo 2](https://github.com/tej-kweku/vuejs-leafletjs-map-editor/img/demo2.jpg)](http://tej-kweku.github.io/vuejs-leafletjs-map-editor)
 
 ## Installation
 
@@ -41,9 +43,9 @@ git clone https://github.com/tej-kweku/vuejs-leafletjs-map-editor.git
 
 ```js
 import Vue from 'vue'
-import { GeoJSONWidget } from 'GeoJSONWidget'
+import { GeofenceEditor } from 'GeofenceEditor'
 
-Vue.use(GeoJSONWidget)
+Vue.use(GeofenceEditor)
 ```
 
 #### Register manually
@@ -51,31 +53,31 @@ Vue.use(GeoJSONWidget)
 ##### Global
 
 ```js
-import { GeoJSONWidget } from 'GeoJSONWidget';
+import { GeofenceEditor } from 'GeofenceEditor';
 
-Vue.component('geojson-widget', GeoJSONWidget);
+Vue.component('geofence-editor', GeofenceEditor);
 ```
 
 ##### Local
 
 ```js
-import { GeoJSONWidget } from 'GeoJSONWidget';
+import { GeofenceEditor } from 'GeofenceEditor';
 
 Vue.extend({
   template: '...',
   components: {
-    geojson-widget: GeoJSONWidget
+    geofence-editor: GeofenceEditor
   }
 });
 ```
 
 ### Browser
 
-Download GeoJSONWidget.
+Download GeofenceEditor.
 
 ```html
 <script src="vue.js"></script>
-<script src="GeoJSONWidget.js"></script>
+<script src="GeofenceEditor.js"></script>
 ```
 
 
@@ -84,7 +86,7 @@ Download GeoJSONWidget.
 ### Minimal
 
 ```html
-<geojson-widget v-model="geojson"></geojson-widget>
+<geofence-editor v-model="geojson"></geofence-editor>
 ```
 
 ## Setup
@@ -96,7 +98,7 @@ Parameter | Type | Default | Description
 min-features | `Number` | `1` | Minimum number of features.
 max-features | `Numer` | `10` | Maximum number of features.
 data-input-type | `String` | `"both"` | Data input type: manual, map or both
-v-model (*required*) | ISO 8601 `String` | - | GeoJSONWidget.
+v-model (*required*) | ISO 8601 `String` | - | GeofenceEditor.
 parentBBox | `Object` | `null` | A FeatureCollection geojson for parent bounding box.
 siblingGeojson | `Object` | `null` | A FeatureCollection geojson of the sibling geojson.
 

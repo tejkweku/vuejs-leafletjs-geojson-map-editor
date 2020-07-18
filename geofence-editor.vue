@@ -1,7 +1,8 @@
 <template>
-  <div class="container">
-    <div class="container" id="top-widget-controls">
-      <div class="form-group">
+  <div>
+
+    <div class="form-group" style="display: flex; justify-content: space-between;">
+      <div id="map-data-input" style="display: inline; flex: 1 0 100px;">
         <h5 class="m-r-20" style="display: inline">Data Input</h5>
         <label
           for="geojson-input-type-manual"
@@ -10,7 +11,7 @@
         >
           <input
             type="radio"
-            class="control-input"
+            class="custom-control-input"
             id="geojson-input-type-manual"
             value="manual"
             v-model="inputType"
@@ -27,7 +28,7 @@
         >
           <input
             type="radio"
-            class="control-input"
+            class="custom-control-input"
             id="geojson-input-type-map"
             value="map"
             v-model="inputType"
@@ -39,10 +40,12 @@
         </label>
       </div>
 
-      <!-- geojson config pane -->
+      <!-- config -->
       <div class="config">
         <button
+          class="btn btn-primary"
           v-on:click="toggleConfigContainer"
+          v-bind:disabled="inputDisabled"
         > Config</button>
         <div 
           class="config-content"
@@ -50,28 +53,28 @@
         >
 
           <h5 class="config-title"> Feature Count</h5>
-          <div class="config-group">
+          <div class="form-group">
             <label
               for="config-min-features"
-              class="custom-control custom-radio custom-control-inline"
-            >Minumum: </label>
+              class=""
+            >Minimum </label>
             <input
               type="number"
-              class="control-input"
+              class="form-control"
               id="config-min-features"
               v-model="config.minFeatures"
               v-bind:min="Number(minFeatures)"
               v-bind:max="Number(config.maxFeatures) - 1"
             />
           </div>
-          <div class="config-group">
+          <div class="form-group">
             <label
               for="config-max-features"
-              class="custom-control custom-radio custom-control-inline"
-            >Maximum: </label>
+              class=""
+            >Maximum </label>
             <input
               type="number"
-              class="control-input"
+              class="form-control"
               id="config-max-features"
               v-model="config.maxFeatures"
               v-bind:min="Number(config.minFeatures) + 1"
@@ -80,14 +83,14 @@
           </div>
           <hr />
           <h5 class="config-title"> Show Geojsons</h5>
-          <div class="config-group">
+          <div class="form-group">
             <label
               for="config-show-parentbbox"
-              class="custom-control custom-radio custom-control-inline"
+              class="custom-control custom-checkbox"
             >
               <input
                 type="checkbox"
-                class="control-input"
+                class="custom-control-input"
                 id="config-show-parentbbox"
                 v-model="config.show.parentBBox"
                 v-bind:disabled="!parentBBox"
@@ -98,14 +101,14 @@
               <span class="custom-control-label">Parent Bounding Box</span>
             </label>
           </div>
-          <div class="config-group">
+          <div class="form-group">
             <label
               for="config-show-sibling-geojson"
-              class="custom-control custom-radio custom-control-inline"
+              class="custom-control custom-checkbox"
             >
               <input
                 type="checkbox"
-                class="control-input"
+                class="custom-control-input"
                 id="config-show-sibling-geojson"
                 v-model="config.show.siblingGeojson"
                 v-bind:disabled="!siblingGeojson"
@@ -118,53 +121,44 @@
           </div>
           <hr />
           <h5 class="config-title"> Validation Rules</h5>
-          <div class="config-group">
+          <div class="form-group">
             <label
               for="config-validation-rules-no-intersecting-features"
-              class="custom-control custom-radio custom-control-inline"
+              class="custom-control custom-checkbox"
             >
               <input
                 type="checkbox"
-                class="control-input"
+                class="custom-control-input"
                 id="config-validation-rules-no-intersecting-features"
                 v-model="config.validationRules.noIntersectingFeatures"
-                v-bind:disabled="errors.turf"
-                true-value="true"
-                false-value=""
               />
               <span class="custom-control-label">No Intersecting Features</span>
             </label>
           </div>
-          <div class="config-group">
+          <div class="form-group">
             <label
               for="config-validation-rules-do-not-intersect-sibling-geojson"
-              class="custom-control custom-radio custom-control-inline"
+              class="custom-control custom-checkbox"
             >
               <input
                 type="checkbox"
-                class="control-input"
+                class="custom-control-input"
                 id="config-validation-rules-do-not-intersect-sibling-geojson"
                 v-model="config.validationRules.doNotIntersectSiblingGeojson"
-                v-bind:disabled="errors.turf"
-                true-value="true"
-                false-value=""
               />
               <span class="custom-control-label">Do Not Intersect Sibling Geojson</span>
             </label>
           </div>
-          <div class="config-group">
+          <div class="form-group">
             <label
               for="config-validation-rules-features-in-bounding-box"
-              class="custom-control custom-radio custom-control-inline"
+              class="custom-control custom-checkbox"
             >
               <input
                 type="checkbox"
-                class="control-input"
+                class="custom-control-input"
                 id="config-validation-rules-features-in-bounding-box"
                 v-model="config.validationRules.featuresInBoundingBox"
-                true-value="true"
-                false-value=""
-                v-bind:disabled="!parentBBox || errors.turf"
               />
               <span class="custom-control-label">All Features in Bounding Box</span>
             </label>
@@ -172,7 +166,14 @@
 
         </div>
       </div>
-      <!-- end geojson config pane -->
+      <!-- end config -->
+    </div>
+
+    <div class="form-group">
+      <div class="alert alert-info">
+        <span class="fa fa-info-circle"></span>
+        Maximum number of features based on selected geofence type is {{ maxFeatures }}
+      </div>
     </div>
 
     <!-- manual data input container -->
@@ -193,18 +194,18 @@
           v-bind:key="fIdx"
           class="col-lg-12 m-t-10 feature"
         >
-          <div class="m-b-10 m-r-10 feature-title">
+          <div class="m-r-10" style="flex: 1;">
             <label class="control-label">Title</label>
             <input
               v-model="feature.properties.title"
               v-bind:ref="'featureTitle' + fIdx"
               v-bind:disabled="inputDisabled"
               type="text"
-              class="form-control"
+              class="form-control map-manual-feature-title"
               required
             />
           </div>
-          <div class="m-b-10 m-r-10 feature-coordinates">
+          <div class="m-r-10" style="flex: 2;">
             <label class="control-label">
               Coordinates
               <span class="text-danger">*</span>
@@ -214,16 +215,18 @@
               v-bind:ref="'featureCoordinates' + fIdx"
               v-bind:disabled="inputDisabled"
               type="text"
-              class="form-control"
+              class="form-control map-manual-feature-coordinates"
               required
             />
           </div>
-          <div class="feature-actions">
+          <div class="">
+            <label> </label><br>
             <button
               class="btn btn-danger"
               v-on:click.prevent="removeFeature(fIdx)"
               v-bind:disabled="inputDisabled"
-            > Remove
+            >
+              <i class="fa fa-trash"></i>
             </button>
           </div>
         </div>
@@ -238,32 +241,36 @@
         class="m-t-20" 
         v-show="((inputType == 'map'))" 
         v-if="wDataInputType == 'map' || wDataInputType == 'both'"
-        ref="mapObj"></div>
+        ref="mapObj">
+      </div>
     </div>
     <!-- end manual data input container -->
 
-    <div class="middle">
-      <div class="btn-group m-b-20">
+    <div class="form-group m-t-20 m-b-0">
+      <div class="btn-group">
         <button
           class="btn btn-primary"
           style="float: right"
           v-on:click.stop="editMapData"
           v-bind:disabled="canEdit"
-        > Edit
+        >
+          <i class="fa fa-edit"></i> Edit
         </button>
         <button 
           class="btn btn-primary" 
           style="float: right" 
           v-on:click.stop="resetMapData"
           v-bind:disabled="canReset"
-        > Reset
+        > 
+          <i class="fa fa-undo"></i> Reset
         </button>
         <button 
           class="btn btn-primary" 
           style="float: right" 
           v-on:click.stop="validateMapData"
           v-bind:disabled="canValidate"
-        > Validate
+        > 
+          <i class="fa fa-check"></i> Validate
         </button>
       </div>
     </div>
@@ -272,6 +279,7 @@
 </template>
 
 <script>
+import GeofenceMixins from "../mixins/geofences";
 
 var map = null,
   geoJSONGroup = null,
@@ -282,6 +290,7 @@ var map = null,
 
 export default {
   props: ["mapboxAccessToken", "minFeatures", "maxFeatures", "dataInputType", "parentBBox", "siblingGeojson"],
+  mixins: [GeofenceMixins],
   data() {
     return {
       inputDisabled: false,
@@ -311,9 +320,9 @@ export default {
           siblingGeojson: true,
         },
         validationRules: {
-          noIntersectingFeatures: false,
-          doNotIntersectSiblingGeojson: false,
-          featuresInBoundingBox: false
+          noIntersectingFeatures: true,
+          doNotIntersectSiblingGeojson: true,
+          featuresInBoundingBox: true
         }
       },
       errors: {
@@ -360,15 +369,18 @@ export default {
       }
 
       // run the tests
-      this.testHasValidFeatures(this.inputType, dataGeojson)
+      this.testHasValidFeatures(this.inputType, dataGeojson, this.config, vm.$refs)
         .then(THVF => {
+          vm.finalGeojson = THVF.geojson;
+
           var TFIOA = (this.config.validationRules.noIntersectingFeatures) ?
             this.testFeaturesIntersectOneAnother(
               vm.finalGeojson.features
             ) : Promise.resolve(true);
           var TFISG = (this.config.validationRules.doNotIntersectSiblingGeojson) ?
             this.testFeaturesIntersectSiblingGeojson(
-              vm.finalGeojson.features
+              vm.finalGeojson.features,
+              vm.siblingGeojson
             ) : Promise.resolve(true);
           var TBBCF = (this.config.validationRules.featuresInBoundingBox) ? 
             this.testBoundingBoxContainsFeatures(
@@ -406,8 +418,8 @@ export default {
                   vm.$emit("error", errMsg);
                 });
               } else if (err.test == "TBBCF") {
-                err.data.forEach((errTitle) => {
-                  errMsg = "Feature '" + errTitle + "' is not fully within the Parent Bounding Box";
+                err.data.forEach((errDataItem) => {
+                  errMsg = "Feature '" + errDataItem.titles[1] + "' is not fully within the Parent Bounding Box '" + errDataItem.titles[0] + "'";
                   vm.$emit("error", errMsg);
                 });
               } else {
@@ -440,176 +452,6 @@ export default {
       this.inputDisabled = false;
       this.$emit("input", null);
     },
-    testHasValidFeatures: function(inputType, dataGeojson) {
-      return new Promise((resolve, reject) => {
-        var vm = this;
-
-        switch (inputType) {
-          case "manual":
-            this.finalGeojson = JSON.parse(JSON.stringify(this.defaults.geojson));
-            dataGeojson.features.forEach((feature, fIdx) => {
-              var coordElement = vm.$refs["featureCoordinates" + fIdx][0];
-              coordElement.classList.remove("is-invalid");
-
-              try {
-                if (!feature.properties.title) {
-                  throw new Error("Feature must have a title");
-                }
-                let poly = turf.polygon(JSON.parse(feature.geometry.coordinates), {
-                  title: feature.properties.title
-                });
-                vm.finalGeojson.features.push(poly);
-              } catch (err) {
-                vm.finalGeojson = JSON.parse(JSON.stringify(this.defaults.geojson));
-                coordElement.classList.add("is-invalid");
-                coordElement.focus();
-
-                reject({ test: "THVF", data: err.message, success: false });
-              }
-            });
-            break;
-          case "map":
-            this.finalGeojson = geoJSONGroup.toGeoJSON();
-            if (this.finalGeojson.features.length < 1) {
-              reject({
-                test: "THVF",
-                data: "Use the drawing tools to draw at least one polygon"
-              });
-            } else if (this.finalGeojson.features.length > this.config.maxFeatures) {
-              reject({
-                test: "THVF",
-                data:
-                  "Number of features exceeds limit for selected Geofence Type"
-              });
-            }
-            break;
-          default:
-            break;
-        }
-
-        resolve({ test: "THVF", success: true });
-      });
-    },
-    testFeaturesIntersectOneAnother(features) {
-      return new Promise((resolve, reject) => {
-        var intersects = [];
-        var intersectObj = null;
-        let len1 = features.length;
-
-        for (let pFIdx = 0; pFIdx < len1; pFIdx++) {
-          var primaryFeature = features[pFIdx],
-            primaryFeatureTitle = features[pFIdx].properties.title
-              ? features[pFIdx].properties.title
-              : (pFIdx + 1);
-          for (let sFIdx = pFIdx + 1; sFIdx < len1; sFIdx++) {
-            var secondaryFeature = features[sFIdx],
-              secondaryFeatureTitle = features[sFIdx].properties.title
-                ? features[sFIdx].properties.title
-                : (sFIdx + 1);
-
-            // test for intersecting features
-            intersectObj = turf.intersect(primaryFeature, secondaryFeature);
-
-            if (
-                intersectObj && 
-                ["Polygon", "MultiPolygon"].indexOf(intersectObj.geometry.type) > -1) 
-            {
-              intersects.push({
-                titles: [primaryFeatureTitle, secondaryFeatureTitle],
-                indexes: [pFIdx, sFIdx]
-              });
-            } else {
-              continue;
-            }
-          }
-        }
-
-        if (intersects.length == 0) {
-          resolve({ test: "TFIOA", success: true });
-        } else {
-          reject({ test: "TFIOA", data: intersects, success: false });
-        }
-      });
-    },
-    testFeaturesIntersectSiblingGeojson(features) {
-      return new Promise((resolve, reject) => {
-        var intersects = [];
-        var intersectObj = null;
-        const siblingFeatures = this.siblingGeojson.features;
-
-        for (let siblingFIdx = 0; siblingFIdx < siblingFeatures.length; siblingFIdx++) {
-          var siblingFeature = siblingFeatures[siblingFIdx],
-            siblingFeatureTitle = siblingFeatures[siblingFIdx].properties.title
-              ? siblingFeatures[siblingFIdx].properties.title
-              : (siblingFIdx + 1);
-              
-          for (let newFIdx = 0; newFIdx < features.length; newFIdx++) {
-            var newFeature = features[newFIdx],
-              newFeatureTitle = features[newFIdx].properties.title
-                ? features[newFIdx].properties.title
-                : (newFIdx + 1);
-
-            // test for intersecting features
-            intersectObj = turf.intersect(siblingFeature, newFeature);
-
-            if (
-                intersectObj && 
-                ["Polygon", "MultiPolygon"].indexOf(intersectObj.geometry.type) > -1) 
-            {
-              intersects.push({
-                titles: [siblingFeatureTitle, newFeatureTitle],
-                indexes: [siblingFIdx, newFIdx]
-              });
-            } else {
-              continue;
-            }
-          }
-        }
-
-        if (intersects.length == 0) {
-          resolve({ test: "TFISG", success: true });
-        } else {
-          reject({ test: "TFISG", data: intersects, success: false });
-        }
-      });
-    },
-    testBoundingBoxContainsFeatures(features, parentBBox = null) {
-      return new Promise((resolve, reject) => {
-        var intersects = [],
-          fpCount = 0;
-
-        if (parentBBox != null) {
-          for (let pFIdx = 0; pFIdx < features.length; pFIdx++) {
-            const pFeature = features[pFIdx];
-
-            var featurePoints = turf.explode(pFeature)
-              .features.map((pp) => {
-                return pp.geometry;
-              });
-            fpCount = featurePoints.length;
-            var featurePointsCol = turf.featureCollection(featurePoints);
-
-            var pointsWithinParentBBox = turf.within(
-              featurePointsCol, 
-              parentBBox
-            );
-            
-            if (pointsWithinParentBBox.features.length != fpCount) {
-              const pFeatureTitle = pFeature.properties.title
-                ? pFeature.properties.title
-                : (pFIdx + 1);
-              intersects.push(pFeatureTitle);
-            }
-          }
-        }
-
-        if (intersects.length == 0) {
-          resolve({ test: "TBBCF", success: true });
-        } else {
-          reject({ test: "TBBCF", data: intersects, success: false });
-        }
-      });
-    },
     mapDataInputChanged: function(nextView) {
       var vm = this;
 
@@ -619,7 +461,7 @@ export default {
           feature.geometry.coordinates = JSON.stringify(feature.geometry.coordinates);
         });
       } else if (nextView == "map") {
-        this.testHasValidFeatures("manual", JSON.parse(JSON.stringify(this.geojson)))
+        this.testHasValidFeatures("manual", JSON.parse(JSON.stringify(this.geojson)), vm.config, vm.$refs)
           .then(() => {
             this.initializeMap();
           })
