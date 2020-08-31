@@ -9,9 +9,11 @@
 
 **[Go to demo](http://tej-kweku.github.io/vuejs-leafletjs-map-editor)**.
 
-![Demo 1](https://tej-kweku.github.io/vuejs-leafletjs-map-editor/demo1.jpg)
+![Demo 1](https://tej-kweku.github.io/vuejs-leafletjs-map-editor/demo3.jpg)
 
-![Demo 2](https://tej-kweku.github.io/vuejs-leafletjs-map-editor/demo2.jpg)
+![Demo 2](https://tej-kweku.github.io/vuejs-leafletjs-map-editor/demo4.jpg)
+
+![Demo 3](https://tej-kweku.github.io/vuejs-leafletjs-map-editor/demo5.jpg)
 
 ## Installation
 

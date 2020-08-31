@@ -294,7 +294,7 @@ export default {
   data() {
     return {
       inputDisabled: false,
-      inputType: null,
+      inputType: "map",
       countFeatures: 0,
       geojson: {
         type: "FeatureCollection",
@@ -458,11 +458,23 @@ export default {
       if (nextView == "manual") {
         this.geojson = JSON.parse(JSON.stringify(geoJSONGroup.toGeoJSON()));
         this.geojson.features.forEach(feature => {
-          feature.geometry.coordinates = JSON.stringify(feature.geometry.coordinates);
+          const ftCoords = JSON.stringify(feature.geometry.coordinates);
+          feature.geometry.coordinates = ftCoords.slice(1, -1);
         });
       } else if (nextView == "map") {
         this.testHasValidFeatures("manual", JSON.parse(JSON.stringify(this.geojson)), vm.config, vm.$refs)
-          .then(() => {
+          .then((data) => {
+            if (vm.parentBBoxGeoJSONGroup) {
+              vm.parentBBoxGeoJSONGroup.remove();
+            };
+            if (vm.siblingGeoJSONGroup) {
+              vm.siblingGeoJSONGroup.remove();
+            }
+
+            vm.geojson = data.geojson;
+            vm.finalGeojson = data.geojson;
+            vm.geoJSONGroup = null;
+            
             this.initializeMap();
           })
           .catch((err) => {
@@ -621,11 +633,11 @@ export default {
             });
           }
           if (this.siblingGeojson) {
-            this.config.show.siblingGeojson = true;
+            // this.config.show.siblingGeojson = true;
             this.showSiblingGeojson();
           }
           if (this.parentBBox) {
-            this.config.show.parentBBox = true;
+            // this.config.show.parentBBox = true;
             this.showParentBBox();
           }
         }
