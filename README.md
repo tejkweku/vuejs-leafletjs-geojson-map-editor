@@ -1,9 +1,21 @@
-# vuejs-leafletjs-map-editor
+# Vuejs Leafletjs GeoJSON Map Editor
 
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE)
 [![Vue 2.x](https://img.shields.io/badge/vue-2.x-brightgreen.svg?style=flat-square)](https://vuejs.org)
 
-> GeoJson map editor for Vue using Leafletjs. Supports manual coordinate input and drawing modes.
+GeoJson map editor for Vue using Leafletjs. 
+
+Supports manual coordinate input and drawing modes.
+
+Requires MapBox API to use drawing mode.
+
+Able to determine:
+* Child GeoJSON is partially or fully out of parent GeoJSON
+* Intersection of GeoJSONs
+
+A suggested usecase for the tool is to edit and create GeoJSON objects.
+
+You may use this tool for charity or school projects, for commercial use, please contact me.
 
 ## Demo
 
